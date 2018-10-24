@@ -15,15 +15,15 @@ class URLBuilder {
         self.baseCurrency = base
     }
     
-    private func createRequest(url: URL, rate: @escaping (_ response: Rate?) -> Void) {
+    public func createRequest(url: URL, rate: @escaping (_ response: Rate?) -> Void) {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        print(url)
         
         let session = URLSession(configuration: .default)
         let task = session.dataTask(with: request) {
             (responseData, response, error) in DispatchQueue.main.async {
                 if let resError = error {
+                    print("Result error")
                     print(resError)
                 } else if let jsonData = responseData {
                     let decoder = JSONDecoder()
@@ -39,15 +39,8 @@ class URLBuilder {
         }
         task.resume()
     }
-    
-    public func getRatesforToday() -> Bool {
-        let url = URL(string: "\(self.base_url)/latest?access_key=\(self.api_key)")
-        self.createRequest(url: url!) { (response: Rate?) in
-            for (base, value) in (response?.rates)! {
-                print(base)
-            }
-        }
-        return true
+    public func getURL(_ url: String) -> URL {
+        return URL(string: "\(self.base_url)/\(url)?access_key=\(self.api_key)")!
     }
     
 }
